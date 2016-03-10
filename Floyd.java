@@ -12,6 +12,12 @@ public class Floyd {
         private int nextVertex;
         private boolean infinity;
 
+        public Vertex(double weight, int nextVertex, boolean infinity) {
+            this.weight = weight;
+            this.nextVertex = nextVertex;
+            this.infinity = infinity;
+        }
+
         /**
          * Returns value of weight
          *
@@ -74,6 +80,10 @@ public class Floyd {
                     continue;
                 }
                 for (int k = 0; k < nVertices; k++) {
+                    if (weightTable[j][i].isInfinity() ||
+                            weightTable[i][k].isInfinity()) {
+                        continue;
+                    }
                     double testWeight = weightTable[j][i].getWeight() +
                                         weightTable[i][k].getWeight();
                     if (weightTable[i][k].isInfinity() || 
@@ -100,17 +110,11 @@ public class Floyd {
                         (i + 1) + ", " + (j + 1) + ")\n" +
                         "(or -1 for no edge): ");
                 double weight = kb.nextDouble();
-                Vertex vertex = new Vertex();
                 if (weight != -1) {
-                    vertex.setInfinity(false);
-                    vertex.setWeight(weight);
-                    vertex.setNextVertex(j);
+                    weightTable[i][j] = new Vertex(weight, j + 1, false);
                 } else {
-                    vertex.setInfinity(true);
-                    vertex.setWeight(-1);
-                    vertex.setNextVertex(-1);
+                    weightTable[i][j] = new Vertex(-1, -1, false);
                 }
-                weightTable[i][j] = vertex;
             }
         }
         printWeightTable();
@@ -131,6 +135,17 @@ public class Floyd {
         System.out.println(sb.toString());
     }
 
+    protected void setTestTable() {
+        weightTable = new Vertex[5][5];
+        weightTable[0][0] = new Vertex(0, 1, false);    weightTable[1][0] = new Vertex(1, 2, false);    weightTable[2][0] = new Vertex(-1, -1, true);   weightTable[3][0] = new Vertex(1, 4, false);   weightTable[4][0] = new Vertex(5, 5, false);
+        weightTable[0][1] = new Vertex(9, 1, false);    weightTable[1][1] = new Vertex(0, 2, false);    weightTable[2][1] = new Vertex(3, 3, false);    weightTable[3][1] = new Vertex(2, 4, false);   weightTable[4][1] = new Vertex(-1, -1, true);
+        weightTable[0][2] = new Vertex(-1, -1, true);   weightTable[1][2] = new Vertex(-1, -1, true);   weightTable[2][2] = new Vertex(0, 3, false);    weightTable[3][2] = new Vertex(4, 4, false);   weightTable[4][2] = new Vertex(-1, -1, true);
+        weightTable[0][3] = new Vertex(-1, -1, true);   weightTable[1][3] = new Vertex(-1, -1, true);   weightTable[2][3] = new Vertex(2, 3, false);    weightTable[3][3] = new Vertex(0, 4, false);   weightTable[4][3] = new Vertex(3, 5, false);
+        weightTable[0][4] = new Vertex(3, 1, false);    weightTable[1][4] = new Vertex(-1, -1, true);   weightTable[2][4] = new Vertex(-1, -1, true);   weightTable[3][4] = new Vertex(-1, -1, true);   weightTable[4][4] = new Vertex(0, 5, false);
+
+        printWeightTable();
+    }
+
     /*
      * Interact with user to get directed graph data.
      */
@@ -141,7 +156,8 @@ public class Floyd {
 
     public static void main(String[] args) {
         Floyd driver = new Floyd();
-        driver.userInteraction();
+//        driver.userInteraction();
+        driver.setTestTable();
         driver.obtainShortestPath();
     }
 }
