@@ -85,11 +85,12 @@ public class Floyd {
                         continue;
                     }
                     double testWeight = weightTable[j][i].getWeight() +
-                                        weightTable[i][k].getWeight();
-                    if (weightTable[i][k].isInfinity() || 
-                            (weightTable[i][k].getWeight() > testWeight)) {
+                            weightTable[i][k].getWeight();
+                    if (weightTable[j][k].isInfinity() ||
+                            (weightTable[j][k].getWeight() > testWeight)) {
                         weightTable[j][k].setWeight(testWeight);
-                        weightTable[j][k].setNextVertex(i);
+                        weightTable[j][k].setNextVertex(i + 1);
+                        weightTable[j][k].setInfinity(false);
                     }
                 }
             }
@@ -97,7 +98,7 @@ public class Floyd {
         printWeightTable();
     }
 
-    protected void getVerticeNumber() {
+    protected void getVerticesNumber() {
         System.out.print("Enter number of vertices: ");
         nVertices = kb.nextInt();
         weightTable = new Vertex[nVertices][nVertices];
@@ -123,11 +124,25 @@ public class Floyd {
     protected void printWeightTable() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < nVertices; i++) {
+            if (i == 0) {
+                sb.append(String.format("%10s", "|"));
+            }
+            sb.append(String.format("%9d%1s", (i + 1), "|"));
+        }
+        sb.append("\n");
+        for (int i = 0; i <= nVertices; i++) {
+            sb.append(String.format("%10s", "---------|"));
+        }
+        sb.append("\n");
+        for (int i = 0; i < nVertices; i++) {
             for (int j = 0; j < nVertices; j++) {
-                if (weightTable[i][j].isInfinity()) {
-                    sb.append("-");
+                if (j == 0) {
+                    sb.append(String.format("%9d%1s", i + 1, "|"));
+                }
+                if (weightTable[j][i].isInfinity()) {
+                    sb.append(String.format("%10s", "-|"));
                 } else {
-                    sb.append(weightTable[i][j].getWeight() + "\t");
+                    sb.append(String.format("%10s", weightTable[j][i].getWeight() + "(" + weightTable[j][i].getNextVertex() + ")" + "|"));
                 }
             }
             sb.append("\n");
@@ -136,21 +151,20 @@ public class Floyd {
     }
 
     protected void setTestTable() {
-        weightTable = new Vertex[5][5];
+        nVertices = 5;
+        weightTable = new Vertex[nVertices][nVertices];
         weightTable[0][0] = new Vertex(0, 1, false);    weightTable[1][0] = new Vertex(1, 2, false);    weightTable[2][0] = new Vertex(-1, -1, true);   weightTable[3][0] = new Vertex(1, 4, false);   weightTable[4][0] = new Vertex(5, 5, false);
         weightTable[0][1] = new Vertex(9, 1, false);    weightTable[1][1] = new Vertex(0, 2, false);    weightTable[2][1] = new Vertex(3, 3, false);    weightTable[3][1] = new Vertex(2, 4, false);   weightTable[4][1] = new Vertex(-1, -1, true);
         weightTable[0][2] = new Vertex(-1, -1, true);   weightTable[1][2] = new Vertex(-1, -1, true);   weightTable[2][2] = new Vertex(0, 3, false);    weightTable[3][2] = new Vertex(4, 4, false);   weightTable[4][2] = new Vertex(-1, -1, true);
         weightTable[0][3] = new Vertex(-1, -1, true);   weightTable[1][3] = new Vertex(-1, -1, true);   weightTable[2][3] = new Vertex(2, 3, false);    weightTable[3][3] = new Vertex(0, 4, false);   weightTable[4][3] = new Vertex(3, 5, false);
         weightTable[0][4] = new Vertex(3, 1, false);    weightTable[1][4] = new Vertex(-1, -1, true);   weightTable[2][4] = new Vertex(-1, -1, true);   weightTable[3][4] = new Vertex(-1, -1, true);   weightTable[4][4] = new Vertex(0, 5, false);
-
-        printWeightTable();
     }
 
     /*
      * Interact with user to get directed graph data.
      */
     protected void userInteraction() {
-        getVerticeNumber();
+        getVerticesNumber();
         getVertexWeights();
     }
 
