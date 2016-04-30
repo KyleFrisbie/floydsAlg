@@ -1,3 +1,8 @@
+/*
+ * Exercise 10 FLoyd's Algorithm
+ * @author: Kyle L Frisbie, Ryan Newsom
+ * @date: 4/30/16
+ */
 import java.util.Scanner;
 import java.lang.StringBuilder;
 
@@ -74,6 +79,7 @@ public class Floyd {
     }
 
     protected void obtainShortestPath() {
+        printWeightTable(0);
         for (int i = 0; i < nVertices; i++) {
             for (int j = 0; j < nVertices; j++) {
                 if (weightTable[j][i].isInfinity()) {
@@ -94,8 +100,8 @@ public class Floyd {
                     }
                 }
             }
+            printWeightTable(i + 1);
         }
-        printWeightTable();
     }
 
     protected void getVerticesNumber() {
@@ -112,20 +118,20 @@ public class Floyd {
                         "(or -1 for no edge): ");
                 double weight = kb.nextDouble();
                 if (weight != -1) {
-                    weightTable[i][j] = new Vertex(weight, j + 1, false);
+                    weightTable[i][j] = new Vertex(weight, 0, false);
                 } else {
-                    weightTable[i][j] = new Vertex(-1, -1, false);
+                    weightTable[i][j] = new Vertex(-1, 0, true);
                 }
             }
         }
-        printWeightTable();
+        System.out.println();
     }
 
-    protected void printWeightTable() {
+    protected void printWeightTable(int pass) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < nVertices; i++) {
             if (i == 0) {
-                sb.append(String.format("%10s", "|"));
+                sb.append(String.format("%10s", "D(" + pass + ")|"));
             }
             sb.append(String.format("%9d%1s", (i + 1), "|"));
         }
@@ -139,10 +145,10 @@ public class Floyd {
                 if (j == 0) {
                     sb.append(String.format("%9d%1s", i + 1, "|"));
                 }
-                if (weightTable[j][i].isInfinity()) {
-                    sb.append(String.format("%10s", "-|"));
+                if (weightTable[i][j].isInfinity()) {
+                    sb.append(String.format("%10s", "-(0)|"));
                 } else {
-                    sb.append(String.format("%10s", weightTable[j][i].getWeight() + "(" + weightTable[j][i].getNextVertex() + ")" + "|"));
+                    sb.append(String.format("%10s", weightTable[i][j].getWeight() + "(" + weightTable[i][j].getNextVertex() + ")" + "|"));
                 }
             }
             sb.append("\n");
@@ -150,15 +156,15 @@ public class Floyd {
         System.out.println(sb.toString());
     }
 
-    protected void setTestTable() {
-        nVertices = 5;
-        weightTable = new Vertex[nVertices][nVertices];
-        weightTable[0][0] = new Vertex(0, 1, false);    weightTable[1][0] = new Vertex(1, 2, false);    weightTable[2][0] = new Vertex(-1, -1, true);   weightTable[3][0] = new Vertex(1, 4, false);   weightTable[4][0] = new Vertex(5, 5, false);
-        weightTable[0][1] = new Vertex(9, 1, false);    weightTable[1][1] = new Vertex(0, 2, false);    weightTable[2][1] = new Vertex(3, 3, false);    weightTable[3][1] = new Vertex(2, 4, false);   weightTable[4][1] = new Vertex(-1, -1, true);
-        weightTable[0][2] = new Vertex(-1, -1, true);   weightTable[1][2] = new Vertex(-1, -1, true);   weightTable[2][2] = new Vertex(0, 3, false);    weightTable[3][2] = new Vertex(4, 4, false);   weightTable[4][2] = new Vertex(-1, -1, true);
-        weightTable[0][3] = new Vertex(-1, -1, true);   weightTable[1][3] = new Vertex(-1, -1, true);   weightTable[2][3] = new Vertex(2, 3, false);    weightTable[3][3] = new Vertex(0, 4, false);   weightTable[4][3] = new Vertex(3, 5, false);
-        weightTable[0][4] = new Vertex(3, 1, false);    weightTable[1][4] = new Vertex(-1, -1, true);   weightTable[2][4] = new Vertex(-1, -1, true);   weightTable[3][4] = new Vertex(-1, -1, true);   weightTable[4][4] = new Vertex(0, 5, false);
-    }
+//    protected void setTestTable() {
+//        nVertices = 5;
+//        weightTable = new Vertex[nVertices][nVertices];
+//        weightTable[0][0] = new Vertex(0, 1, false);    weightTable[1][0] = new Vertex(1, 2, false);    weightTable[2][0] = new Vertex(-1, -1, true);   weightTable[3][0] = new Vertex(1, 4, false);   weightTable[4][0] = new Vertex(5, 5, false);
+//        weightTable[0][1] = new Vertex(9, 1, false);    weightTable[1][1] = new Vertex(0, 2, false);    weightTable[2][1] = new Vertex(3, 3, false);    weightTable[3][1] = new Vertex(2, 4, false);   weightTable[4][1] = new Vertex(-1, -1, true);
+//        weightTable[0][2] = new Vertex(-1, -1, true);   weightTable[1][2] = new Vertex(-1, -1, true);   weightTable[2][2] = new Vertex(0, 3, false);    weightTable[3][2] = new Vertex(4, 4, false);   weightTable[4][2] = new Vertex(-1, -1, true);
+//        weightTable[0][3] = new Vertex(-1, -1, true);   weightTable[1][3] = new Vertex(-1, -1, true);   weightTable[2][3] = new Vertex(2, 3, false);    weightTable[3][3] = new Vertex(0, 4, false);   weightTable[4][3] = new Vertex(3, 5, false);
+//        weightTable[0][4] = new Vertex(3, 1, false);    weightTable[1][4] = new Vertex(-1, -1, true);   weightTable[2][4] = new Vertex(-1, -1, true);   weightTable[3][4] = new Vertex(-1, -1, true);   weightTable[4][4] = new Vertex(0, 5, false);
+//    }
 
     /*
      * Interact with user to get directed graph data.
@@ -170,8 +176,8 @@ public class Floyd {
 
     public static void main(String[] args) {
         Floyd driver = new Floyd();
-//        driver.userInteraction();
-        driver.setTestTable();
+        driver.userInteraction();
+//        driver.setTestTable();
         driver.obtainShortestPath();
     }
 }
